@@ -19,8 +19,8 @@ angular.module('ngSnake', [])
     var snake = {
       direction: DIRECTIONS.LEFT,
       parts: {
-        x: -1,
-        y: -1
+        x: 5,
+        y: 4
       }
     };
 
@@ -34,8 +34,6 @@ angular.module('ngSnake', [])
       else if ($scope.board[col][row] == 1) {
         return COLORS.PLAYER;
       }
-      
-
       return COLORS.BOARD;
     };
 
@@ -54,20 +52,24 @@ angular.module('ngSnake', [])
 
       // Do it again
       snake.direction = tempDirection;
-      $timeout(update, interval);
+
+      setupBarriers();
+      // $timeout(update, interval);
     }
 
     function getNewHead() {
       var newHead = angular.copy(snake.parts);
       console.log(newHead);
       // Update Location
-      if (tempDirection === DIRECTIONS.LEFT) {
+
+      
+      if (tempDirection === DIRECTIONS.LEFT && newHead.x > 0 && $scope.board[newHead.y][newHead.x -1] != -1) {
           newHead.x -= 1;
-      } else if (tempDirection === DIRECTIONS.RIGHT) {
+      } else if (tempDirection === DIRECTIONS.RIGHT && newHead.x < (BOARD_SIZE - 1) && $scope.board[newHead.y][newHead.x +1] != -1) {
           newHead.x += 1;
-      } else if (tempDirection === DIRECTIONS.UP) {
+      } else if (tempDirection === DIRECTIONS.UP && newHead.y > 0 && $scope.board[newHead.y - 1][newHead.x] != -1) {
           newHead.y -= 1;
-      } else if (tempDirection === DIRECTIONS.DOWN) {
+      } else if (tempDirection === DIRECTIONS.DOWN && newHead.y < (BOARD_SIZE - 1) && $scope.board[newHead.y + 1][newHead.x] != -1) {
           newHead.y += 1;
       }
       return newHead;
@@ -101,15 +103,19 @@ angular.module('ngSnake', [])
 
     $window.addEventListener("keyup", function(e) {
       
-      if (e.keyCode == DIRECTIONS.LEFT && snake.direction !== DIRECTIONS.RIGHT) {
+      if (e.keyCode == DIRECTIONS.LEFT) {
         tempDirection = DIRECTIONS.LEFT;
-      } else if (e.keyCode == DIRECTIONS.UP && snake.direction !== DIRECTIONS.DOWN) {
+        console.log("left");
+      } else if (e.keyCode == DIRECTIONS.UP) {
         tempDirection = DIRECTIONS.UP;
-      } else if (e.keyCode == DIRECTIONS.RIGHT && snake.direction !== DIRECTIONS.LEFT) {
+        console.log("up");
+      } else if (e.keyCode == DIRECTIONS.RIGHT) {
         tempDirection = DIRECTIONS.RIGHT;
-      } else if (e.keyCode == DIRECTIONS.DOWN && snake.direction !== DIRECTIONS.UP) {
+      } else if (e.keyCode == DIRECTIONS.DOWN) {
         tempDirection = DIRECTIONS.DOWN;
       }
+
+      $timeout(update, 1000);
 
     });
 
